@@ -4,76 +4,39 @@
  * @flow
  */
 
-import React, { Component } from 'react'
-import ReactNative, {Button, DrawerLayoutAndroid} from 'react-native'
-import Drawer from 'react-native-drawer'
+import React, { Component } from 'react';
 import {
   AppRegistry,
   StyleSheet,
   Text,
   View
-} from 'react-native'
+} from 'react-native';
 
-export default class symptomia extends Component {
+export default class Symptomia extends Component {
   render() {
-
-    var navigationView = (
-      <View style={{flex: 1, backgroundColor: '#556270'}}>
-        <View style={styles.navTitle}>
-          <Text style={{margin: 10, fontSize: 15, textAlign: 'center', color: '#FF6B6B'}}>Symptomia</Text>
-        </View>
-        <View style={styles.navButtons}>
-          <Button
-            onPress={null}
-            color="#FF6B6B"
-            accessabilityLabel="Calendar"
-            title="Calendar"
-          />
-          <Button
-            onPress={null}
-            color="#C44D58"
-            accessabilityLabel="Settings"
-            title="Settings"
-          />
-        </View>
-      </View>
-    );
     return (
-      <DrawerLayoutAndroid
-        drawerWidth={300}
-        drawerBackgroundColor="#272822"
-        drawerPosition={DrawerLayoutAndroid.positions.Left}
-        renderNavigationView={() => navigationView}
-        >
-          <View style={{flex: 1, alignItems: 'center'}}>
-            <Text style={{margin: 10, fontSize: 15, textAlign: 'right'}}>Hello world!</Text>
-          </View>
-      </DrawerLayoutAndroid>
-
+      <View style={styles.container}>
+        <Text style={styles.welcome}>
+          Welcome to React Native!
+        </Text>
+        <Text style={styles.instructions}>
+          To get started, edit index.android.js
+        </Text>
+        <Text style={styles.instructions}>
+          Double tap R on your keyboard to reload,{'\n'}
+          Shake or press menu button for dev menu
+        </Text>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  navTitle: {
-    backgroundColor: '#272822'
-  },
-  navButtons: {
-    flex: 1
-  },
-  drawer: {
-    shadowColor: '#000000',
-    shadowOpacity: 0.8,
-    shadowRadius: 3,
-    backgroundColor: '#000000'
-  },
-  text: {
-    color: '#FFFFFF',
-    margin: 10,
-    fontSize: 15
-  },
-  main: {
-    paddingLeft: 3
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',
   },
   welcome: {
     fontSize: 20,
@@ -87,4 +50,4 @@ const styles = StyleSheet.create({
   },
 });
 
-AppRegistry.registerComponent('symptomia', () => symptomia);
+AppRegistry.registerComponent('Symptomia', () => Symptomia);
