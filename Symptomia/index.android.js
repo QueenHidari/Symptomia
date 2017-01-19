@@ -5,6 +5,10 @@
  */
 
 import React, { Component } from 'react';
+<<<<<<< HEAD
+=======
+import Drawer from 'react-native-drawer'
+>>>>>>> parent of 62620c4... Updated and added drawer
 import {
   AppRegistry,
   StyleSheet,
@@ -16,6 +20,7 @@ export default class Symptomia extends Component {
   render() {
     return (
       <View style={styles.container}>
+<<<<<<< HEAD
         <Text style={styles.welcome}>
           Welcome to React Native!
         </Text>
@@ -26,17 +31,51 @@ export default class Symptomia extends Component {
           Double tap R on your keyboard to reload,{'\n'}
           Shake or press menu button for dev menu
         </Text>
+=======
+        <Drawer
+            type="overlay"
+            content={
+              <View style={styles.main}></View>
+            }
+            tapToClose={true}
+            openDrawerOffset={0.2}
+            panCloseMask={0.2}
+            closedDrawerOffset={-3}
+            tweenHandler={(ratio) => ({
+              main: { opacity:(2-ratio)/2 }
+            })}
+          >
+        </Drawer>
+
+>>>>>>> parent of 62620c4... Updated and added drawer
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+<<<<<<< HEAD
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
+=======
+  drawer: {
+    shadowColor: '#000000',
+    shadowOpacity: 0.8,
+    shadowRadius: 3,
+    backgroundColor: '#000000'
+  },
+  main: {
+    paddingLeft: 3
+>>>>>>> parent of 62620c4... Updated and added drawer
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#2F2F2F',
   },
   welcome: {
     fontSize: 20,
