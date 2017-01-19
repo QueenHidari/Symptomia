@@ -4,14 +4,9 @@
  * @flow
  */
 
-import React, { Component } from 'react';
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> parent of 62620c4... Updated and added drawer
+import React, { Component } from 'react'
+import ReactNative, {Button, DrawerLayoutAndroid} from 'react-native'
 import Drawer from 'react-native-drawer'
->>>>>>> parent of 62620c4... Updated and added drawer
 import {
   AppRegistry,
   StyleSheet,
@@ -21,90 +16,67 @@ import {
 
 export default class Symptomia extends Component {
   render() {
-    return (
-      <View style={styles.container}>
-<<<<<<< HEAD
-<<<<<<< HEAD
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.android.js
-        </Text>
-        <Text style={styles.instructions}>
-          Double tap R on your keyboard to reload,{'\n'}
-          Shake or press menu button for dev menu
-        </Text>
-=======
-=======
->>>>>>> parent of 62620c4... Updated and added drawer
-        <Drawer
-            type="overlay"
-            content={
-              <View style={styles.main}></View>
-            }
-            tapToClose={true}
-            openDrawerOffset={0.2}
-            panCloseMask={0.2}
-            closedDrawerOffset={-3}
-            tweenHandler={(ratio) => ({
-              main: { opacity:(2-ratio)/2 }
-            })}
-          >
-        </Drawer>
-
-<<<<<<< HEAD
->>>>>>> parent of 62620c4... Updated and added drawer
-=======
->>>>>>> parent of 62620c4... Updated and added drawer
+    var navigationView = (
+      <View style={{flex: 1, backgroundColor: '#556270'}}>
+        <View style={styles.navTitle}>
+          <Text style={{margin: 10, fontSize: 15, textAlign: 'center', color: '#FF6B6B'}}>Symptomia</Text>
+        </View>
+        <View style={styles.navButtons}>
+          <Button
+            onPress={null}
+            color="#FF6B6B"
+            accessabilityLabel="Calendar"
+            title="Calendar"
+          />
+          <Button
+            onPress={null}
+            color="#C44D58"
+            accessabilityLabel="Settings"
+            title="Settings"
+          />
+        </View>
       </View>
+    );
+    return (
+      <DrawerLayoutAndroid
+        drawerWidth={300}
+        drawerBackgroundColor="#272822"
+        drawerPosition={DrawerLayoutAndroid.positions.Left}
+        renderNavigationView={() => navigationView}
+        >
+          <View style={{flex: 1, alignItems: 'center'}}>
+            <Text style={{margin: 10, fontSize: 15, textAlign: 'right'}}>Hello world!</Text>
+          </View>
+      </DrawerLayoutAndroid>
+
     );
   }
 }
 
 const styles = StyleSheet.create({
-<<<<<<< HEAD
-<<<<<<< HEAD
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-=======
-=======
->>>>>>> parent of 62620c4... Updated and added drawer
+  navTitle: {
+    backgroundColor: '#272822'
+  },
+  navButtons: {
+    flex: 1
+  },
   drawer: {
     shadowColor: '#000000',
     shadowOpacity: 0.8,
     shadowRadius: 3,
     backgroundColor: '#000000'
   },
+  text: {
+    color: '#FFFFFF',
+    margin: 10,
+    fontSize: 15
+  },
   main: {
     paddingLeft: 3
->>>>>>> parent of 62620c4... Updated and added drawer
   },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#2F2F2F',
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#2F2F2F',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
+
+
+
 });
 
 AppRegistry.registerComponent('Symptomia', () => Symptomia);
