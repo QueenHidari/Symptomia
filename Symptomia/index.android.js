@@ -1,107 +1,172 @@
 
-import React, { Component } from 'react';
-import ReactNative, {Button, DrawerLayoutAndroid} from 'react-native';
-import Calendar from 'react-native-calendar';
+import React, { Component } from 'react'
+import Calendar from 'react-native-calendar'
 import {
+  Button,
+  DrawerLayoutAndroid,
   AppRegistry,
   StyleSheet,
   Text,
   View
-} from 'react-native';
-import Moment from 'moment';
-import { extendMoment } from 'moment-range';
+} from 'react-native'
+import Moment from 'moment'
+import ActionButton from 'react-native-action-button'
+import Icon from 'react-native-vector-icons/MaterialIcons'
+import { createStore } from 'redux'
+import syncopeCounter from './reducers/index'
+import {
+  setScreen,
+  enableButton,
+  disableButton,
+  setDate,
+  addEvent
+} from './actions/index'
 
-function nothing() {
-  return;
+var dateToday = Moment()
+
+var onDateSelect = (date) => { store.dispatch(setDate(date)) }
+
+class homeMenu extends Component {
+  render () {
+    return (
+      <View style={{flex: 1, alignItems: 'center'}}>
+        <View style={styles.container}>
+          <Calendar
+            customStyle={{day: {fontSize: 15, textAlign: 'center'}}}
+            nextButtonText={'Next'}
+            onDateSelect={(date) => onDateSelect(date)}
+            prevButtonText={'Prev'}
+            scrollEnabled={true}
+            selectedDate={dateToday}
+            showControls={true}
+            showEventIndicators={true}
+            startDate={Moment().startOf('month')}
+            titleFormat={'MMMM YYYY'}
+            today={Moment()}
+            weekStart={0}
+          />
+        </View>
+        <Button
+          style={styles.button}
+          onPress={() => { store.dispatch(setScreen(eventScreen)) }}
+          color="#FF6B6B"
+          accessabilityLabel="Events"
+          title="Events"
+        />
+        <Text style={styles.mainText}>{String(store.getState().events)}</Text>
+        <Text style={styles.mainText}>{String(store.getState().date)}</Text>
+      </View>
+    )
+  }
 }
 
-
-const moment = extendMoment(Moment);
-const start = new Date(2016, 12, 10);
-const end = Moment().add(1, 'days').startOf('day');
-dateToday = Moment();
-export default class Symptomia extends Component {
-  state = {
-    date: dateToday
-  }
-  onDateSelect = ({ date }) => this.setState({ ...this.state, date });
-  render() {
-
-
-
-    function onSwipePrev() {
-      return;
-    }
-    function onSwipeNext() {
-      return;
-    }
-
-    function onTouchNext() {
-      return;
-    }
-    function onTouchPrev() {
-      return;
-    }
-    var navigationView = (
+class navigationView extends Component {
+  render () {
+    return (
       <View style={{flex: 1, backgroundColor: '#556270'}}>
         <View style={styles.navTitle}>
-          <Text style={{margin: 10, fontSize: 15, textAlign: 'center', color: '#FF6B6B'}}>Symptomia</Text>
+          <Text style={{margin: 10, fontSize: 15, textAlign: 'center', color: '#FF6B6B'}}>Syncope Event Counter</Text>
         </View>
         <View style={styles.navButtons}>
           <Button
-            onPress={nothing()}
+            onPress={() => {}}
             color="#FF6B6B"
             accessabilityLabel="Calendar"
             title="Calendar"
           />
           <Button
-            onPress={nothing()}
+            onPress={() => {}}
             color="#C44D58"
             accessabilityLabel="Settings"
             title="Settings"
           />
         </View>
       </View>
-    );
-    return (
-      <DrawerLayoutAndroid
-        drawerWidth={300}
-        drawerBackgroundColor="#272822"
-        drawerPosition={DrawerLayoutAndroid.positions.Left}
-        renderNavigationView={() => navigationView}
-        >
-          <View style={{flex: 1, alignItems: 'center'}}>
-            <View style={styles.container}>
-              <Calendar
-                customStyle={{day: {fontSize: 15, textAlign: 'center'}}} // Customize any pre-defined styles 
-                nextButtonText={'Next'}           // Text for next button. Default: 'Next' 
-                onDateSelect={(date) => this.onDateSelect(date)} // Callback after date selection 
-                onSwipeNext={this.onSwipeNext}    // Callback for forward swipe event 
-                onSwipePrev={this.onSwipePrev}    // Callback for back swipe event 
-                onTouchNext={this.onTouchNext}    // Callback for next touch event 
-                onTouchPrev={this.onTouchPrev}    // Callback for prev touch event 
-                prevButtonText={'Prev'}           // Text for previous button. Default: 'Prev' 
-                scrollEnabled={true}              // False disables swiping. Default: False 
-                selectedDate={this.state.date}       // Day to be selected 
-                showControls={true}               // False hides prev/next buttons. Default: False 
-                showEventIndicators={true}        // False hides event indicators. Default:False 
-                startDate={Moment().startOf('month')}          // The first month that will display. Default: current month 
-                titleFormat={'MMMM YYYY'}         // Format for displaying current month. Default: 'MMMM YYYY' 
-                today={Moment()}              // Defaults to today 
-                weekStart={1} // Day on which week starts 0 - Sunday, 1 - Monday, 2 - Tuesday, etc, Default: 1 
-              />
-            </View>
-          </View>
-      </DrawerLayoutAndroid>
-
-    );
+    )
   }
 }
 
+class eventScreen extends Component {
+  render () {
+    return(
+      <View style={{flex: 1, alignItems: 'center'}}>
+        <View style={{height: 20}} />
+        <Button
+          style={styles.returnButton}
+          onPress={() => { store.dispatch(setScreen(homeMenu)) }}
+          color="#FF6B6B"
+          accessabilityLabel="Return"
+          title="Return"
+        />
+      </View>
+    )
+  }
+}
+export default class SycopeCounterProject extends Component {
+  render () {
+    return (
+      <View style={{flex: 1, backgroundColor: '#f3f3f3', flexGrow: 1}}>
+        <DrawerLayoutAndroid
+          drawerWidth={300}
+          drawerBackgroundColor="#272822"
+          drawerPosition={DrawerLayoutAndroid.positions.Left}
+          renderNavigationView={() => navigationView}
+          >
+            {store.getState().menu}
+        </DrawerLayoutAndroid>
+        <ActionButton buttonColor="rgba(231,76,60,1)">
+          <ActionButton.Item buttonColor="#88d498"
+            title="New Event"
+            onPress={() => store.dispath(addEvent(store.getState().date, 'syncope'))}
+            >
+            <Icon name="create" style={styles.actionButtonIcon} />
+          </ActionButton.Item>
+        </ActionButton>
+      </View>
+    )
+  }
+}
+
+
+
+
+//function combine() {
+//  var rv = {};
+//  for (i = 0; i < arguments.length; i++) {
+//    for (thing in arguments[i]) {
+//        rv[thing]=arguments[i][thing];
+//    }
+//  }
+//  return rv;
+//}
+
+// const store = createStore(syncopeCounter);
+
+/* store.subscribe(throttle(() => {
+  saveState({
+    events: store.getState().events
+  })
+}, 1000)) */
+let store = createStore(syncopeCounter)
+
+
+
 const styles = StyleSheet.create({
+  button: {
+    width: 20
+  },
+  returnButton: {
+    width: 20,
+    marginTop: 10
+  },
+  actionButtonIcon: {
+    fontSize: 20,
+    height: 22,
+    color: 'white'
+  },
   container: {
-    flex: 1,
-    flexGrow: 1,
+    height: 400,
+    width: 320,
     marginTop: 20
   },
   date: {
@@ -114,7 +179,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#272822'
   },
   navButtons: {
-    flex: 1
+    flex: 1,
+    flexGrow: 1
   },
   drawer: {
     shadowColor: '#000000',
@@ -127,12 +193,13 @@ const styles = StyleSheet.create({
     margin: 10,
     fontSize: 15
   },
+  mainText: {
+    color: '#111111',
+    margin: 10,
+    fontSize: 15
+  },
   main: {
     paddingLeft: 3
-  },
-
-
-
-});
-
-AppRegistry.registerComponent('Symptomia', () => Symptomia);
+  }
+})
+AppRegistry.registerComponent('SyncopeCounterProject', () => this.SyncopeCounterProject)
