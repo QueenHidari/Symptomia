@@ -7,7 +7,9 @@ import {
   AppRegistry,
   StyleSheet,
   Text,
-  View
+  View,
+  ScrollView,
+  Navigator
 } from 'react-native'
 import Moment from 'moment'
 import ActionButton from 'react-native-action-button'
@@ -22,46 +24,11 @@ import {
   addEvent
 } from './actions/index'
 
-var dateToday = Moment()
+var dateToday = Moment().toDate()
 
-var onDateSelect = (date) => { store.dispatch(setDate(date)) }
+let store = createStore(syncopeCounter)
 
-class homeMenu extends Component {
-  render () {
-    return (
-      <View style={{flex: 1, alignItems: 'center'}}>
-        <View style={styles.container}>
-          <Calendar
-            customStyle={{day: {fontSize: 15, textAlign: 'center'}}}
-            nextButtonText={'Next'}
-            onDateSelect={(date) => onDateSelect(date)}
-            prevButtonText={'Prev'}
-            scrollEnabled={true}
-            selectedDate={dateToday}
-            showControls={true}
-            showEventIndicators={true}
-            startDate={Moment().startOf('month')}
-            titleFormat={'MMMM YYYY'}
-            today={Moment()}
-            weekStart={0}
-          />
-        </View>
-        <Button
-          style={styles.button}
-          onPress={() => { store.dispatch(setScreen(eventScreen)) }}
-          color="#FF6B6B"
-          accessabilityLabel="Events"
-          title="Events"
-        />
-        <Text style={styles.mainText}>{String(store.getState().events)}</Text>
-        <Text style={styles.mainText}>{String(store.getState().date)}</Text>
-      </View>
-    )
-  }
-}
-
-class navigationView extends Component {
-  render () {
+var navigationView = () => {
     return (
       <View style={{flex: 1, backgroundColor: '#556270'}}>
         <View style={styles.navTitle}>
@@ -83,25 +50,9 @@ class navigationView extends Component {
         </View>
       </View>
     )
-  }
 }
 
-class eventScreen extends Component {
-  render () {
-    return(
-      <View style={{flex: 1, alignItems: 'center'}}>
-        <View style={{height: 20}} />
-        <Button
-          style={styles.returnButton}
-          onPress={() => { store.dispatch(setScreen(homeMenu)) }}
-          color="#FF6B6B"
-          accessabilityLabel="Return"
-          title="Return"
-        />
-      </View>
-    )
-  }
-}
+
 export default class SycopeCounterProject extends Component {
   render () {
     return (
@@ -110,14 +61,34 @@ export default class SycopeCounterProject extends Component {
           drawerWidth={300}
           drawerBackgroundColor="#272822"
           drawerPosition={DrawerLayoutAndroid.positions.Left}
-          renderNavigationView={() => navigationView}
+          renderNavigationView={navigationView}
           >
-            {store.getState().menu}
+          <Navigator
+            initialRoute={{ index: 0 }}
+            renderScene={(route, navigator) => {
+              return <Screen
+                onEventScreenPress={
+                  navigator.push({
+                    index: 1
+                  })
+                }
+
+                onBackButton={() => {
+                    if (route.index > 0) {
+                      navigator.pop()
+                    }
+                  }
+                }
+
+
+              />
+            }}
+          />
         </DrawerLayoutAndroid>
         <ActionButton buttonColor="rgba(231,76,60,1)">
           <ActionButton.Item buttonColor="#88d498"
             title="New Event"
-            onPress={() => store.dispath(addEvent(store.getState().date, 'syncope'))}
+            onPress={() => { store.dispatch(addEvent(store.getState().date, 'syncope')) }}
             >
             <Icon name="create" style={styles.actionButtonIcon} />
           </ActionButton.Item>
@@ -127,29 +98,81 @@ export default class SycopeCounterProject extends Component {
   }
 }
 
+class Screen extends Component {
+  render () {
+    var homeMenu = (
+      <View style={{flex: 1, alignItems: 'center'}}>
+        <View style={styles.container}>
+          <Calendar
+            customStyle={{day: {fontSize: 15, textAlign: 'center'}}}
+            nextButtonText={'Next'}
+            onDateSelect={(date) => onDateSelect(date)}
+            prevButtonText={'Prev'}
+            scrollEnabled={true}
+            selectedDate={dateToday}
+            showControls={true}
+            showEventIndicators={true}
+            startDate={Moment().startOf('month')}
+            titleFormat={'MMMM YYYY'}
+            today={Moment()}
+            weekStart={0}
+          />
+        </View>
+        <Button
+          style={styles.button}
+          onPress={this.props.onEventScreenPress}
+          color="#FF6B6B"
+          accessabilityLabel="Events"
+          title="Events"
+        />
+        <Text style={styles.mainText}>{String(store.getState().date)}</Text>
+      </View>
+    )
+    var renderEvents = () => {
+      return (
+        store.getState().events.map((event) => {
+          return (
+            <View style={styles.event}>
+              <Text>Event</Text>
+              <Text>Symptom: {event.symptom}</Text>
+              <Text>date: {event.date}</Text>
+            </View>
+          )
+        })
+      )
+    }
+    var eventScreen = (
+      <View style={{flex: 1, alignItems: 'center'}}>
+        <Button
+          style={styles.button}
+          onPress={this.props.onBackPress}
+          color="#FF6B6B"
+          accessabilityLabel="Back"
+          title="Back"
+        />
+        <View style={styles.eventList}>
+          <ScrollView>
+            {renderEvents}
+          </ScrollView>
+        </View>
+      </View>
+    )
 
-
-
-//function combine() {
-//  var rv = {};
-//  for (i = 0; i < arguments.length; i++) {
-//    for (thing in arguments[i]) {
-//        rv[thing]=arguments[i][thing];
-//    }
-//  }
-//  return rv;
-//}
-
-// const store = createStore(syncopeCounter);
-
-/* store.subscribe(throttle(() => {
-  saveState({
-    events: store.getState().events
-  })
-}, 1000)) */
-let store = createStore(syncopeCounter)
-
-
+    var screen = () => {
+      if (this.props.index === 0) {
+        return homeMenu
+      } else if (this.props.index === 1) {
+        return eventScreen
+      } else {
+        return homeMenu
+      }
+    }
+    var onDateSelect = (date) => { store.dispatch(setDate(date)) }
+    return (
+      screen()
+    )
+  }
+}
 
 const styles = StyleSheet.create({
   button: {
@@ -175,13 +198,6 @@ const styles = StyleSheet.create({
   focused: {
     color: 'blue'
   },
-  navTitle: {
-    backgroundColor: '#272822'
-  },
-  navButtons: {
-    flex: 1,
-    flexGrow: 1
-  },
   drawer: {
     shadowColor: '#000000',
     shadowOpacity: 0.8,
@@ -202,4 +218,5 @@ const styles = StyleSheet.create({
     paddingLeft: 3
   }
 })
-AppRegistry.registerComponent('SyncopeCounterProject', () => this.SyncopeCounterProject)
+
+AppRegistry.registerComponent('SyncopeCounterProject', () => SycopeCounterProject)

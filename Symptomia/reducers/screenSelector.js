@@ -1,5 +1,6 @@
 import homeMenu from '../index.android'
-const screenSelector = (state = {menu: homeMenu}, action) => {
+
+const screenSelector = (state = {...state, menu: homeMenu}, action) => {
   switch (action.type) {
     case 'SET_SCREEN':
       return Object.assign({}, state, {
