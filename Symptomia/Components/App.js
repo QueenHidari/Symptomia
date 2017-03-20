@@ -13,37 +13,15 @@ import ActionButton from 'react-native-action-button'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import Moment from 'moment'
 import uuidV4 from 'uuid'
-
-var navigationView = () => {
-  return (
-    <View style={{flex: 1, backgroundColor: '#556270'}}>
-      <View style={styles.navTitle}>
-        <Text style={{margin: 10, fontSize: 15, textAlign: 'center', color: '#FF6B6B'}}>Syncope Event Counter</Text>
-      </View>
-      <View style={styles.navButtons}>
-        <Button
-          onPress={() => {}}
-          color="#FF6B6B"
-          accessabilityLabel="Calendar"
-          title="Calendar"
-        />
-        <Button
-          onPress={() => {}}
-          color="#C44D58"
-          accessabilityLabel="Settings"
-          title="Settings"
-        />
-      </View>
-    </View>
-  )
-}
+import BluetoothScreen from './BluetoothScreen'
 
 class App extends Component {
   constructor (props) {
     super(props)
     this.state = {
       date: Moment().startOf('day'),
-      events: []
+      events: [],
+      navigator: null
     }
   }
   onDateSelect (date) {
@@ -65,6 +43,29 @@ class App extends Component {
     })
   }
   render () {
+    var navigationView = () => {
+      return (
+        <View style={{flex: 1, backgroundColor: '#556270'}}>
+          <View style={styles.navTitle}>
+            <Text style={{margin: 10, fontSize: 15, textAlign: 'center', color: '#FF6B6B'}}>Syncope Event Counter</Text>
+          </View>
+          <View style={styles.navButtons}>
+            <Button
+              onPress={() => {}}
+              color="#FF6B6B"
+              accessabilityLabel="Calendar"
+              title="Calendar"
+            />
+            <Button
+              onPress={() => {}}
+              color="#C44D58"
+              accessabilityLabel="Settings"
+              title="Settings"
+            />
+          </View>
+        </View>
+      )
+    }
     return (
       <View style={{flex: 1, backgroundColor: '#f3f3f3', flexGrow: 1}}>
         <DrawerLayoutAndroid
@@ -84,10 +85,20 @@ class App extends Component {
                   onEventScreenPress={() => {
                     navigator.push({index: 1})
                   }}
+                  onBluetoothScreenPress={() => {
+                    navigator.push({index: 2})
+                  }}
                 />
               } else if (route.index === 1) {
                 return <EventScreen
                   events={this.state.events}
+                  onBackPress={() => {
+                    navigator.pop()
+                  }}
+                />
+              } else if (route.index === 2) {
+                return <BluetoothScreen
+                  manager={this.props.manager}
                   onBackPress={() => {
                     navigator.pop()
                   }}

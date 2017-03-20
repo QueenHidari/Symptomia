@@ -15,8 +15,27 @@ class EventScreen extends Component {
     this.state = {}
   }
   render () {
-
-
+    var renderEvents = (events) => {
+      return (
+        this.props.events.map((event) => {
+          return (
+            <View>
+              <View style={styles.event}>
+                <View style={styles.eventElement}>
+                  <Icon name="favorite" style={{fontSize: 20, margin: 5, marginLeft: 10, color: '#FF6B6B'}} />
+                  <Text style={styles.eventText}>Symptom: {event.symptom}</Text>
+                </View>
+                <View style={styles.eventElement}>
+                  <Icon name="date-range" style={{fontSize: 20, margin: 5, marginLeft: 10, color: '#FF6B6B'}} />
+                  <Text style={styles.eventText}>Date: {Moment(event.date).format('YYYY-MM-DD')}</Text>
+                </View>
+              </View>
+              <View style={{height: 5}} />
+            </View>
+          )
+        })
+      )
+    }
     return (
       <View style={{flex: 1, alignItems: 'center'}}>
         <View style={{height: 5}} />
