@@ -62,6 +62,9 @@ const styles = StyleSheet.create({
   button: {
     width: 20
   },
+  mainText: {
+    fontSize: 13
+  },
   event: {
     borderRadius: 5,
     width: 300,

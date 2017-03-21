@@ -14,6 +14,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import Moment from 'moment'
 import uuidV4 from 'uuid'
 import BluetoothScreen from './BluetoothScreen'
+import { BleManager } from 'react-native-ble-plx'
 
 class App extends Component {
   constructor (props) {
@@ -23,11 +24,57 @@ class App extends Component {
       events: [],
       navigator: null
     }
+    this.manager = new BleManager()
   }
+
+  info (message) {
+    this.setState({info: message})
+  }
+
+  error (message) {
+    this.setState({info: 'ERROR: ' + message})
+  }
+
+  updateValue (key, value) {
+    this.setState({values: {...this.state.values, [key]: value}})
+  }
+
+  scanAndConnect () {
+    this.manager.startDeviceScan(null, null, (error, device) => {
+      this.info('Scanning...')
+      console.log(device)
+
+      if (error) {
+        this.error(error.message)
+        return
+      }
+
+      if (device.name === 'TI BLE Sensor Tag' || device.name === 'SensorTag') {
+        this.info('Connecting to Arduino')
+        this.manager.stopDeviceScan()
+        device.connect()
+          .then((device) => {
+            this.info('Discovering services and characteristics')
+            return device.discoverAllServicesAndCharacteristics()
+          })
+          .then((device) => {
+            this.info('Setting notifications')
+            return this.setupNotifications(device)
+          })
+          .then(() => {
+            this.info('Listening...')
+          }, (error) => {
+            this.error(error.message)
+          })
+      }
+    })
+  }
+
   onDateSelect (date) {
     console.log('date set: ' + date)
     this.setState({date: date})
   }
+
   onAddEvent (symptom) {
     this.setState((prevState, props) => {
       return {
@@ -42,6 +89,13 @@ class App extends Component {
       }
     })
   }
+
+/*
+  componentWillMount () {
+    this.scanAndConnect()
+  }
+*/
+
   render () {
     var navigationView = () => {
       return (

@@ -4,7 +4,8 @@ import {
   View,
   Button,
   StyleSheet,
-  ScrollView
+  ScrollView,
+  TextInput
 } from 'react-native'
 import Moment from 'moment'
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -47,15 +48,80 @@ class EventScreen extends Component {
           title="Back"
         />
         <View style={{height: 5}} />
-        <ScrollView style={{flex: 1}}>
+        <ScrollView style={{width: 300, height: 300}}>
           {renderEvents(this.props.events)}
         </ScrollView>
+        <View style={{height: 5}} />
+        <View style={{flex: 1, alignItems: 'center'}}>
+          <Text style={styles.mainText}>Date Range:</Text>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Text>Start Date:</Text>
+            <TextInput
+              keyboardType="number-pad"
+              maxLength={2}
+              style={styles.TextInput}
+              placeholder={Moment(this.props.startDate).format('MM')}
+              placeholderTextColor="#606060"
+            />
+            <Text>/</Text>
+            <TextInput
+              keyboardType="number-pad"
+              maxLength={2}
+              style={styles.TextInput}
+              placeholder={Moment(this.props.startDate).format('DD')}
+              placeholderTextColor="#606060"
+            />
+            <Text>/</Text>
+            <TextInput
+              keyboardType="number-pad"
+              maxLength={4}
+              style={styles.TextInput}
+              placeholder={Moment(this.props.startDate).format('YYYY')}
+              placeholderTextColor="#606060"
+            />
+          </View>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Text>End Date:</Text>
+            <TextInput
+              keyboardType="number-pad"
+              maxLength={2}
+              style={styles.TextInput}
+              placeholder={Moment(this.props.endDate).format('MM')}
+              placeholderTextColor="#606060"
+            />
+            <Text>/</Text>
+            <TextInput
+              keyboardType="number-pad"
+              maxLength={2}
+              style={styles.TextInput}
+              placeholder={Moment(this.props.endDate).format('DD')}
+              placeholderTextColor="#606060"
+            />
+            <Text>/</Text>
+            <TextInput
+              keyboardType="number-pad"
+              maxLength={4}
+              style={styles.TextInput}
+              placeholder={Moment(this.props.endDate).format('YYYY')}
+              placeholderTextColor="#606060"
+            />
+          </View>
+        </View>
       </View>
     )
   }
 }
 
 const styles = StyleSheet.create({
+  mainText: {
+    fontSize: 13
+  },
+  TextInput: {
+    height: 40,
+    width: 40,
+    fontSize: 13,
+    padding: 4
+  },
   button: {
     width: 20
   },
