@@ -28,14 +28,17 @@ class App extends Component {
   }
 
   info (message) {
+    console.log(message)
     this.setState({info: message})
   }
 
   error (message) {
+    console.log(message)
     this.setState({info: 'ERROR: ' + message})
   }
 
   updateValue (key, value) {
+    console.log(message)
     this.setState({values: {...this.state.values, [key]: value}})
   }
 
@@ -49,7 +52,7 @@ class App extends Component {
         return
       }
 
-      if (device.name === 'TI BLE Sensor Tag' || device.name === 'SensorTag') {
+      if (device.name === 'Adafruit Bluefruit LE') {
         this.info('Connecting to Arduino')
         this.manager.stopDeviceScan()
         device.connect()
@@ -90,12 +93,32 @@ class App extends Component {
     })
   }
 
-/*
-  componentWillMount () {
-    this.scanAndConnect()
-  }
-*/
+  async setupNotifications(device) {
+    for (const id in this.sensors) {
+      const service = this.serviceUUID(id)
+      const characteristicW = this.writeUUID(id)
+      const characteristicN = this.notifyUUID(id)
 
+      const characteristic = await device.writeCharacteristicWithResponseForService(
+        service, characteristicW, "AQ==" /* 0x01 in hex */
+      )
+
+      device.monitorCharacteristicForService(service, characteristicN, (error, characteristic) => {
+        if (error) {
+          this.error(error.message)
+          return
+        }
+        this.updateValue(characteristic.uuid, characteristic.value)
+      })
+    }
+  }
+  componentWillMount() {
+    this.manager = new BleManager();
+    this.subscriptions = {}
+    this.manager.onStateChange((newState) => {
+      console.log("State changed: " + newState)
+    })
+  }
   render () {
     var navigationView = () => {
       return (
@@ -113,8 +136,8 @@ class App extends Component {
             <Button
               onPress={() => {}}
               color="#C44D58"
-              accessabilityLabel="Settings"
-              title="Settings"
+              accessabilityLabel="Events"
+              title="Events"
             />
           </View>
         </View>
@@ -139,20 +162,13 @@ class App extends Component {
                   onEventScreenPress={() => {
                     navigator.push({index: 1})
                   }}
-                  onBluetoothScreenPress={() => {
-                    navigator.push({index: 2})
+                  onConnectPress={() => {
+                    this.scanAndConnect()
                   }}
                 />
               } else if (route.index === 1) {
                 return <EventScreen
                   events={this.state.events}
-                  onBackPress={() => {
-                    navigator.pop()
-                  }}
-                />
-              } else if (route.index === 2) {
-                return <BluetoothScreen
-                  manager={this.props.manager}
                   onBackPress={() => {
                     navigator.pop()
                   }}

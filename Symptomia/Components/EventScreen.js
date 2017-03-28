@@ -123,7 +123,8 @@ const styles = StyleSheet.create({
     padding: 4
   },
   button: {
-    width: 20
+    width: 40,
+    fontSize: 15
   },
   event: {
     borderRadius: 5,

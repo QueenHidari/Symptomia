@@ -25,7 +25,6 @@ class HomeMenu extends Component {
             }}
             date={this.props.date}
             prevButtonText={'Prev'}
-            scrollEnabled
             showControls
             showEventIndicators
             titleFormat={'MMMM YYYY'}
@@ -43,10 +42,10 @@ class HomeMenu extends Component {
         <View style={{height: 5}} />
         <Button
           style={styles.button}
-          onPress={() => this.props.onBluetoothScreenPress()}
-          color="#FF6B6B"
-          accessabilityLabel="Bluetooth"
-          title="Bluetooth"
+          onPress={() => this.props.onConnectPress()}
+          color="#88d498"
+          accessabilityLabel="Connect"
+          title="Connect"
         />
         <Text style={styles.mainText}>{Moment(this.props.date).format('YYYY-MM-DD')}</Text>
       </View>
@@ -56,29 +55,10 @@ class HomeMenu extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    height: 300,
-    marginTop: 20
-  },
-  button: {
-    width: 20
+    height: 300
   },
   mainText: {
     fontSize: 13
-  },
-  event: {
-    borderRadius: 5,
-    width: 300,
-    height: 80,
-    backgroundColor: '#282828'
-  },
-  eventElement: {
-    marginTop: 5,
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  eventText: {
-    fontSize: 15,
-    color: '#FF6B6B'
   }
 })
 

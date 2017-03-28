@@ -40,6 +40,7 @@ export default class BluetoothScreen extends Component {
 
 const styles = StyleSheet.create({
   button: {
-    width: 40
+    width: 40,
+    fontSize: 15
   }
 })
