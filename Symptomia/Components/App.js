@@ -15,6 +15,29 @@ import Moment from 'moment'
 import uuidV4 from 'uuid'
 import BluetoothScreen from './BluetoothScreen'
 import { BleManager } from 'react-native-ble-plx'
+var express = require("express"),
+    app = express()
+var FitbitApiClient = require("fitbit-node"),
+    client = new FitbitApiClient("228DQ7", "8aa271e288707192e00f10f3de783792")
+app.get("/authorize", function (req, res) {
+    res.redirect(client.getAuthorizeUrl('heartrate profile sleep', 'https://www.fitbit.com/'))
+})
+
+// handle the callback from the Fitbit authorization flow
+app.get("/callback", function (req, res) {
+    // exchange the authorization code we just received for an access token
+    client.getAccessToken(req.query.code, 'https://www.fitbit.com/').then(function (result) {
+        // use the access token to fetch the user's profile information
+        client.get("/profile.json", result.access_token).then(function (results) {
+            res.send(results[0]);
+        })
+    }).catch(function (error) {
+        res.send(error);
+    })
+})
+
+// launch the server
+app.listen(3000)
 
 class App extends Component {
   constructor (props) {
