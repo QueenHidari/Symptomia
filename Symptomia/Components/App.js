@@ -8,36 +8,14 @@ import {
   Navigator
 } from 'react-native'
 import EventScreen from './EventScreen'
-import HomeMenu from './HomeMenu'
+import AddEvents from './EventScreen'
 import ActionButton from 'react-native-action-button'
-import Icon from 'react-native-vector-icons/MaterialIcons'
+import Icon from 'react-native-vector-icons/Ionicons'
 import Moment from 'moment'
 import uuidV4 from 'uuid'
 import BluetoothScreen from './BluetoothScreen'
 import { BleManager } from 'react-native-ble-plx'
-var express = require("express"),
-    app = express()
-var FitbitApiClient = require("fitbit-node"),
-    client = new FitbitApiClient("228DQ7", "8aa271e288707192e00f10f3de783792")
-app.get("/authorize", function (req, res) {
-    res.redirect(client.getAuthorizeUrl('heartrate profile sleep', 'https://www.fitbit.com/'))
-})
-
-// handle the callback from the Fitbit authorization flow
-app.get("/callback", function (req, res) {
-    // exchange the authorization code we just received for an access token
-    client.getAccessToken(req.query.code, 'https://www.fitbit.com/').then(function (result) {
-        // use the access token to fetch the user's profile information
-        client.get("/profile.json", result.access_token).then(function (results) {
-            res.send(results[0]);
-        })
-    }).catch(function (error) {
-        res.send(error);
-    })
-})
-
-// launch the server
-app.listen(3000)
+import Tab from 'Tab'
 
 class App extends Component {
   constructor (props) {
@@ -45,11 +23,52 @@ class App extends Component {
     this.state = {
       date: Moment().startOf('day'),
       events: [],
-      navigator: null
+      navigator: null,
+      title: "events"
     }
+    this.toWork = this.toWork.bind(this)
+    this.toMine = this.toMine.bind(this)
+    this.toSetting = this.toSetting.bind(this)
     this.manager = new BleManager()
+    this.itemList = [
+      {
+        key: 'add',
+        title: 'add',
+        icon: <Icon
+                name="md-add"
+                style={{fontSize: 20, margin: 5, marginLeft: 10, color: '#FF6B6B'}}
+              />,
+        onPress: this.toAdd()
+      },
+      {
+        key: 'events',
+        title: 'events',
+        icon: <Icon
+                name="md-calendar"
+                style={{fontSize: 20, margin: 5, marginLeft: 10, color: '#FF6B6B'}}
+              />,
+        onPress: this.toEvents()
+      },
+      {
+        key: 'settings',
+        title: 'settings',
+        icon: <Icon
+                name="md-settings"
+                style={{fontSize: 20, margin: 5, marginLeft: 10, color: '#FF6B6B'}}
+              />,
+        onPress: this.toSettings()
+      }
+    ]
   }
-
+  toAdd() {
+    this.setState({title: 'add events'});
+  }
+  toEvents() {
+    this.setState({title: 'events'});
+  }
+  toSettings() {
+    this.setState({title: 'setting'});
+  }
   info (message) {
     console.log(message)
     this.setState({info: message})
@@ -143,63 +162,31 @@ class App extends Component {
     })
   }
   render () {
-    var navigationView = () => {
-      return (
-        <View style={{flex: 1, backgroundColor: '#556270'}}>
-          <View style={styles.navTitle}>
-            <Text style={{margin: 10, fontSize: 15, textAlign: 'center', color: '#FF6B6B'}}>Syncope Event Counter</Text>
-          </View>
-          <View style={styles.navButtons}>
-            <Button
-              onPress={() => {}}
-              color="#FF6B6B"
-              accessabilityLabel="Calendar"
-              title="Calendar"
-            />
-            <Button
-              onPress={() => {}}
-              color="#C44D58"
-              accessabilityLabel="Events"
-              title="Events"
-            />
-          </View>
-        </View>
-      )
-    }
     return (
       <View style={{flex: 1, backgroundColor: '#f3f3f3', flexGrow: 1}}>
-        <DrawerLayoutAndroid
-          drawerWidth={300}
-          drawerBackgroundColor="#272822"
-          drawerPosition={DrawerLayoutAndroid.positions.Left}
-          renderNavigationView={navigationView}
-          >
-          <Navigator
-            initialRoute={{ index: 0 }}
-            renderScene={(route, navigator) => {
-              if (route.index === 0) {
-                return <HomeMenu
-                  onDateSelect={(date) => this.onDateSelect(date)}
-                  date={this.state.date}
-                  events={this.state.events}
-                  onEventScreenPress={() => {
-                    navigator.push({index: 1})
-                  }}
-                  onConnectPress={() => {
-                    this.scanAndConnect()
-                  }}
-                />
-              } else if (route.index === 1) {
-                return <EventScreen
-                  events={this.state.events}
-                  onBackPress={() => {
-                    navigator.pop()
-                  }}
-                />
-              }
-            }}
-          />
-        </DrawerLayoutAndroid>
+        <Navigator
+          initialRoute={{ index: 0 }}
+          renderScene={(route, navigator) => {
+            if (this.state.title == 'add event') {
+              return <AddEvents
+                onDateSelect={(date) => this.onDateSelect(date)}
+                date={this.state.date}
+                events={this.state.events}
+                onConnectPress={() => {
+                  this.scanAndConnect()
+                }}
+              />
+            } else if (this.state.title == 'events') {
+              return <EventScreen
+                events={this.state.events}
+              />
+            }
+          }}
+        />
+        <Tab
+          active={this.state.title}
+          itemList={this.itemList}
+        />
         <ActionButton buttonColor="rgba(231,76,60,1)">
           <ActionButton.Item
             buttonColor="#88d498"

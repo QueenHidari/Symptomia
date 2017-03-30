@@ -7,7 +7,7 @@ import {
   StyleSheet
 } from 'react-native'
 import Moment from 'moment'
-class HomeMenu extends Component {
+class AddEvents extends Component {
   constructor (props) {
     super(props)
     this.state = {}
@@ -62,4 +62,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default HomeMenu
+export default AddEvents
