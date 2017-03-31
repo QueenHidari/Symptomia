@@ -15,7 +15,7 @@ import Moment from 'moment'
 import uuidV4 from 'uuid'
 import BluetoothScreen from './BluetoothScreen'
 import { BleManager } from 'react-native-ble-plx'
-import Tab from 'Tab'
+import Tab from 'react-native-tab-xg'
 
 class App extends Component {
   constructor (props) {
@@ -26,10 +26,11 @@ class App extends Component {
       navigator: null,
       title: "events"
     }
-    this.toWork = this.toWork.bind(this)
-    this.toMine = this.toMine.bind(this)
-    this.toSetting = this.toSetting.bind(this)
+
     this.manager = new BleManager()
+    this.toAdd =  this.toAdd.bind(this)
+    this.toEvents = this.toEvents.bind(this)
+    this.toSettings = this.toSettings.bind(this)
     this.itemList = [
       {
         key: 'add',
@@ -38,7 +39,7 @@ class App extends Component {
                 name="md-add"
                 style={{fontSize: 20, margin: 5, marginLeft: 10, color: '#FF6B6B'}}
               />,
-        onPress: this.toAdd()
+        onPress: this.toAdd
       },
       {
         key: 'events',
@@ -47,7 +48,7 @@ class App extends Component {
                 name="md-calendar"
                 style={{fontSize: 20, margin: 5, marginLeft: 10, color: '#FF6B6B'}}
               />,
-        onPress: this.toEvents()
+        onPress: this.toEvents
       },
       {
         key: 'settings',
@@ -56,18 +57,18 @@ class App extends Component {
                 name="md-settings"
                 style={{fontSize: 20, margin: 5, marginLeft: 10, color: '#FF6B6B'}}
               />,
-        onPress: this.toSettings()
+        onPress: this.toSettings
       }
     ]
   }
-  toAdd() {
-    this.setState({title: 'add events'});
+  toAdd () {
+    this.setState({title: 'add'});
   }
-  toEvents() {
+  toEvents () {
     this.setState({title: 'events'});
   }
-  toSettings() {
-    this.setState({title: 'setting'});
+  toSettings () {
+    this.setState({title: 'settings'});
   }
   info (message) {
     console.log(message)
@@ -167,26 +168,42 @@ class App extends Component {
         <Navigator
           initialRoute={{ index: 0 }}
           renderScene={(route, navigator) => {
-            if (this.state.title == 'add event') {
-              return <AddEvents
-                onDateSelect={(date) => this.onDateSelect(date)}
-                date={this.state.date}
-                events={this.state.events}
-                onConnectPress={() => {
-                  this.scanAndConnect()
-                }}
-              />
+            if (this.state.title == 'add') {
+              return (<View>
+                        <AddEvents
+                          onDateSelect={(date) => this.onDateSelect(date)}
+                          date={this.state.date}
+                          events={this.state.events}
+                          onConnectPress={() => {
+                            this.scanAndConnect()
+                          }}
+                        />
+                        <Tab
+                          active={this.state.title}
+                          itemList={this.itemList}
+                        />
+                      </View>
+                    )
             } else if (this.state.title == 'events') {
-              return <EventScreen
-                events={this.state.events}
-              />
+              return (<View>
+                        <EventScreen
+                          events={this.state.events}
+                        />
+                        <Tab
+                          active={this.state.title}
+                          itemList={this.itemList}
+                        />
+                      </View>
+                    )
             }
           }}
         />
+        {/*
         <Tab
           active={this.state.title}
           itemList={this.itemList}
         />
+        */}
         <ActionButton buttonColor="rgba(231,76,60,1)">
           <ActionButton.Item
             buttonColor="#88d498"
