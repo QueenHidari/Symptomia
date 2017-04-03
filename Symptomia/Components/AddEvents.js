@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import Calendar from 'react-native-calendar'
 import {
   Text,
   View,
@@ -7,6 +6,8 @@ import {
   StyleSheet
 } from 'react-native'
 import Moment from 'moment'
+import {DatePicker, Input} from 'react-native-ui-xg'
+
 class AddEvents extends Component {
   constructor (props) {
     super(props)
@@ -15,29 +16,51 @@ class AddEvents extends Component {
 
   render () {
     return (
-      <View style={{flex: 1, alignItems: 'center'}}>
+      <View style={{flex: 1}}>
+        <View style={{height: 5}} />
         <View style={styles.container}>
-          <Calendar
-            customStyle={{day: {fontSize: 15, textAlign: 'center'}}}
-            nextButtonText={'Next'}
-            onDateSelect={(date) => {
-              this.props.onDateSelect(date)
+          <DatePicker
+            style={{width: 350}}
+            date={this.props.dateTimeSelected}
+            mode="datetime"
+            placeholder="select date"
+            format="YYYY-MM-DD HH:mm"
+            maxDate={Moment().format('YYYY-MM-DD HH:mm')}
+            confirmBtnText="Confirm"
+            cancelBtnText="Cancel"
+            customStyles={{
+              dateIcon: {
+                position: 'absolute',
+                left: 0,
+                top: 4,
+                marginLeft: 0
+              },
+              dateInput: {
+                marginLeft: 36
+              }
             }}
-            date={this.props.date}
-            prevButtonText={'Prev'}
-            showControls
-            showEventIndicators
-            titleFormat={'MMMM YYYY'}
-            weekStart={0}
+            onDateChange={(date) => { this.props.onDateTimeSelect(date) }}
           />
         </View>
-        <View style={{height: 2, width: 300, margin: 5, backgroundColor: '#404040'}} />
+        <View style={styles.container}>
+          <Input
+            label="Symptom"
+            value={this.props.symptom}
+            placeholder="symptom"
+            onChangeText={(text) => {
+              console.log('Changed text to: ' + text)
+              this.props.onChangeText(text)
+            }}
+          />
+        </View>
+        <View style={{height: 2, width: 350, margin: 5, backgroundColor: '#404040'}} />
+        <View style={{height: 5}} />
         <Button
           style={styles.button}
-          onPress={() => this.props.onEventScreenPress()}
-          color="#FF6B6B"
-          accessabilityLabel="Events"
-          title="Events"
+          onPress={() => this.props.onAddEvent()}
+          color="#88d498"
+          accessabilityLabel="Log Event"
+          title="Log Event"
         />
         <View style={{height: 5}} />
         <Button
@@ -47,7 +70,7 @@ class AddEvents extends Component {
           accessabilityLabel="Connect"
           title="Connect"
         />
-        <Text style={styles.mainText}>{Moment(this.props.date).format('YYYY-MM-DD')}</Text>
+        <Text style={styles.mainText}>{Moment(this.props.dateTimeSelected).format('YYYY-MM-DD HH:mm')}</Text>
       </View>
     )
   }
@@ -55,7 +78,9 @@ class AddEvents extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    height: 300
+    alignItems: 'center'
+  },
+  button: {
   },
   mainText: {
     fontSize: 13

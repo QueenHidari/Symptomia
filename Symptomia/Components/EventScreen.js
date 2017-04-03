@@ -4,8 +4,7 @@ import {
   View,
   Button,
   StyleSheet,
-  ScrollView,
-  TextInput
+  ScrollView
 } from 'react-native'
 import Moment from 'moment'
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -24,11 +23,13 @@ class EventScreen extends Component {
               <View style={styles.event}>
                 <View style={styles.eventElement}>
                   <Icon name="favorite" style={{fontSize: 20, margin: 5, marginLeft: 10, color: '#FF6B6B'}} />
-                  <Text style={styles.eventText}>Symptom: {event.symptom}</Text>
+                  <Text style={styles.eventText}>Symptom:</Text>
+                  <Text style={styles.eventText}>{event.symptom}</Text>
                 </View>
                 <View style={styles.eventElement}>
                   <Icon name="date-range" style={{fontSize: 20, margin: 5, marginLeft: 10, color: '#FF6B6B'}} />
-                  <Text style={styles.eventText}>Date: {Moment(event.date).format('YYYY-MM-DD')}</Text>
+                  <Text style={styles.eventText}>Date: </Text>
+                  <Text style={styles.eventText}>{Moment(event.date).format('YYYY-MM-DD')}</Text>
                 </View>
               </View>
               <View style={{height: 5}} />
@@ -38,7 +39,7 @@ class EventScreen extends Component {
       )
     }
     return (
-      <View style={{flex: 1, alignItems: 'center'}}>
+      <View style={{flex: 1}}>
         <View style={{height: 5}} />
         <Button
           style={styles.button}
@@ -49,64 +50,11 @@ class EventScreen extends Component {
         />
         <View style={{height: 5}} />
         <ScrollView style={{width: 300, height: 300}}>
-          {renderEvents(this.props.events)}
+          <View style={{alignItems: 'center', flex: 1}}>
+            {renderEvents(this.props.events)}
+          </View>
         </ScrollView>
         <View style={{height: 5}} />
-        <View style={{flex: 1, alignItems: 'center'}}>
-          <Text style={styles.mainText}>Date Range:</Text>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Text>Start Date:</Text>
-            <TextInput
-              keyboardType="number-pad"
-              maxLength={2}
-              style={styles.TextInput}
-              placeholder={Moment(this.props.startDate).format('MM')}
-              placeholderTextColor="#606060"
-            />
-            <Text>/</Text>
-            <TextInput
-              keyboardType="number-pad"
-              maxLength={2}
-              style={styles.TextInput}
-              placeholder={Moment(this.props.startDate).format('DD')}
-              placeholderTextColor="#606060"
-            />
-            <Text>/</Text>
-            <TextInput
-              keyboardType="number-pad"
-              maxLength={4}
-              style={styles.TextInput}
-              placeholder={Moment(this.props.startDate).format('YYYY')}
-              placeholderTextColor="#606060"
-            />
-          </View>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Text>End Date:</Text>
-            <TextInput
-              keyboardType="number-pad"
-              maxLength={2}
-              style={styles.TextInput}
-              placeholder={Moment(this.props.endDate).format('MM')}
-              placeholderTextColor="#606060"
-            />
-            <Text>/</Text>
-            <TextInput
-              keyboardType="number-pad"
-              maxLength={2}
-              style={styles.TextInput}
-              placeholder={Moment(this.props.endDate).format('DD')}
-              placeholderTextColor="#606060"
-            />
-            <Text>/</Text>
-            <TextInput
-              keyboardType="number-pad"
-              maxLength={4}
-              style={styles.TextInput}
-              placeholder={Moment(this.props.endDate).format('YYYY')}
-              placeholderTextColor="#606060"
-            />
-          </View>
-        </View>
       </View>
     )
   }
@@ -115,12 +63,6 @@ class EventScreen extends Component {
 const styles = StyleSheet.create({
   mainText: {
     fontSize: 13
-  },
-  TextInput: {
-    height: 40,
-    width: 40,
-    fontSize: 13,
-    padding: 4
   },
   button: {
     width: 40,
@@ -133,12 +75,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#282828'
   },
   eventElement: {
+    flex: 1,
     marginTop: 5,
-    flexDirection: 'row',
-    alignItems: 'center'
+    flexDirection: 'row'
   },
   eventText: {
-    fontSize: 15,
+    fontSize: 13,
     color: '#FF6B6B'
   }
 })

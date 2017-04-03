@@ -8,7 +8,7 @@ import {
   Navigator
 } from 'react-native'
 import EventScreen from './EventScreen'
-import AddEvents from './EventScreen'
+import AddEvents from './AddEvents'
 import ActionButton from 'react-native-action-button'
 import Icon from 'react-native-vector-icons/Ionicons'
 import Moment from 'moment'
@@ -21,10 +21,11 @@ class App extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      date: Moment().startOf('day'),
+      date: Moment().format('YYYY-MM-DD HH:mm'),
       events: [],
       navigator: null,
-      title: "events"
+      title: 'add',
+      key: 1
     }
 
     this.manager = new BleManager()
@@ -62,13 +63,13 @@ class App extends Component {
     ]
   }
   toAdd () {
-    this.setState({title: 'add'});
+    this.setState({title: 'add', key: 1});
   }
   toEvents () {
-    this.setState({title: 'events'});
+    this.setState({title: 'events', key: 2});
   }
   toSettings () {
-    this.setState({title: 'settings'});
+    this.setState({title: 'settings', key: 3});
   }
   info (message) {
     console.log(message)
@@ -116,12 +117,14 @@ class App extends Component {
     })
   }
 
-  onDateSelect (date) {
+  onDateTimeSelect (date) {
     console.log('date set: ' + date)
     this.setState({date: date})
   }
-
-  onAddEvent (symptom) {
+  onChangeText (text) {
+    this.setState({symptom: text})
+  }
+  onAddEvent () {
     this.setState((prevState, props) => {
       return {
         events: [
@@ -129,7 +132,7 @@ class App extends Component {
           {
             id: uuidV4(),
             date: prevState.date,
-            symptom: symptom
+            symptom: prevState.symptom
           }
         ]
       }
@@ -168,42 +171,30 @@ class App extends Component {
         <Navigator
           initialRoute={{ index: 0 }}
           renderScene={(route, navigator) => {
-            if (this.state.title == 'add') {
-              return (<View>
-                        <AddEvents
-                          onDateSelect={(date) => this.onDateSelect(date)}
-                          date={this.state.date}
-                          events={this.state.events}
-                          onConnectPress={() => {
-                            this.scanAndConnect()
-                          }}
-                        />
-                        <Tab
-                          active={this.state.title}
-                          itemList={this.itemList}
-                        />
-                      </View>
-                    )
-            } else if (this.state.title == 'events') {
-              return (<View>
-                        <EventScreen
-                          events={this.state.events}
-                        />
-                        <Tab
-                          active={this.state.title}
-                          itemList={this.itemList}
-                        />
-                      </View>
-                    )
+            if (this.state.key === 1) {
+              return  <AddEvents
+                        onDateTimeSelect={(date) => this.onDateTimeSelect(date)}
+                        onChangeText={(text) => this.onChangeText(text)}
+                        onAddEvent={() => this.onAddEvent()}
+                        dateTimeSelected={this.state.date}
+                        events={this.state.events}
+                        onConnectPress={() => {
+                          this.scanAndConnect()
+                        }}
+                      />
+            } else if (this.state.key === 2) {
+              return  <EventScreen
+                        events={this.state.events}
+                      />
             }
           }}
         />
-        {/*
+        <Text>{this.state.title}</Text>
         <Tab
           active={this.state.title}
           itemList={this.itemList}
         />
-        */}
+        {/*}
         <ActionButton buttonColor="rgba(231,76,60,1)">
           <ActionButton.Item
             buttonColor="#88d498"
@@ -213,6 +204,7 @@ class App extends Component {
             <Icon name="create" style={styles.actionButtonIcon} />
           </ActionButton.Item>
         </ActionButton>
+        {*/}
       </View>
     )
   }
